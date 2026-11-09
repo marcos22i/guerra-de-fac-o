@@ -58,7 +58,45 @@
 #gfsplash .gt small{font:600 11px system-ui,sans-serif;letter-spacing:.5px;opacity:.85;min-height:12px}
 #gfsplash .gb{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.6)}
 #gfsplash .gb i{display:block;height:100%;width:0;background:#39ff14;box-shadow:0 0 12px #39ff14,0 0 4px #fff}
-</style><div class="gt"><span>CARREGANDO <b id="gfpt">0%</b></span><small id="gfhint"></small></div><div class="gb"><i id="gfbar"></i></div><script>
+</style><div class="gt"><span>CARREGANDO <b id="gfpt">0%</b></span><small id="gfhint"></small></div><div class="gb"><i id="gfbar"></i></div><script id="supa-shim">/* Guerra de Facão – Rio · ponte com o Supabase (só age fora do Claude) */
+(function(){
+if(typeof window.claude!=="undefined")return;
+var URL_="https://vvkmilnxbcayqyxvgkuj.supabase.co",KEY="sb_publishable_W-kQH_PlQRlW-PW-VQvPig_QO0F3N8M";
+if(!URL_||URL_.indexOf("__")===0)return;
+var H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
+function rq(path,opt){opt=opt||{};opt.headers=Object.assign({},H,opt.headers||{});return fetch(URL_+"/rest/v1/"+path,opt).then(function(r){if(!r.ok)throw new Error("supabase "+r.status);return r.status==204?null:r.text().then(function(t){return t?JSON.parse(t):null})})}
+function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
+function me(){var i=null;try{i=localStorage.getItem("gf_uid")}catch(e){}if(!i){i="u"+rid();try{localStorage.setItem("gf_uid",i)}catch(e){}}return i}
+function snap(rows){var docs=rows.map(function(r){return{id:r.id,exists:true,data:function(){return r.data}}});return{docs:docs,empty:!docs.length,size:docs.length}}
+function col(name){
+  var c=encodeURIComponent(name);
+  function q(o){var f=o.f||"t",d=o.d||"desc",n=o.n||50,k=f==="t"?"t":"data->"+f;
+    return rq("docs?collection=eq."+c+"&select=id,data&order="+k+"."+d+"&limit="+n)}
+  function query(o){return{
+    orderBy:function(f,d){return query({f:f,d:d||"asc",n:o.n})},
+    limit:function(n){return query({f:o.f,d:o.d,n:n})},
+    get:function(){return q(o).then(snap)},
+    onSnapshot:function(ok,err){var stop=false,last="",tm=null;
+      function tick(){if(stop)return;q(o).then(function(rows){if(stop)return;var s=JSON.stringify(rows);if(s!==last){last=s;ok(snap(rows))}}).catch(function(e){if(err)try{err(e)}catch(x){}}).then(function(){if(!stop)tm=setTimeout(tick,3000)})}
+      tick();return function(){stop=true;clearTimeout(tm)}}}}
+  var base=query({});
+  base.add=function(obj){return rq("docs",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({collection:name,id:rid(),data:obj,t:+obj.t||Date.now()})})};
+  base.doc=function(id){return{
+    get:function(){return rq("docs?collection=eq."+c+"&id=eq."+encodeURIComponent(id)+"&select=id,data").then(function(r){var x=r&&r[0];return{id:id,exists:!!x,data:function(){return x?x.data:undefined}}})},
+    set:function(obj){return rq("docs?on_conflict=collection,id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({collection:name,id:id,data:obj,t:Date.now()})})}}};
+  return base}
+var DB={collection:col};
+var USER={id:function(){return Promise.resolve(me())},me:function(){var n="";try{n=localStorage.getItem("gf_nome")||""}catch(e){}return Promise.resolve({name:n})}};
+var cbs=[],peers=[],mypres={};
+function pull(){var lim=Date.now()-60000;return rq("presence?seen=gte."+lim+"&select=id,data&limit=200").then(function(rows){peers=rows.map(function(r){return{id:r.id,presence:r.data,isMe:r.id===me()}});cbs.forEach(function(f){try{f({peers:peers})}catch(e){}})}).catch(function(){})}
+var ROOM={
+  peers:function(){return peers},
+  onPeers:function(f){cbs.push(f);if(!ROOM._t){ROOM._t=setInterval(pull,10000)}pull()},
+  presence:function(o){mypres=o||{};return rq("presence?on_conflict=id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:me(),data:mypres,seen:Date.now()})}).then(pull)}};
+window.claude={use:function(n){return Promise.resolve(n==="db"?DB:n==="user"?USER:n==="room"?ROOM:null)}};
+})();
+</script>
+<script>
 (function(){var t0=performance.now(),done=false,fin=false,bar=document.getElementById("gfbar"),pt=document.getElementById("gfpt"),hint=document.getElementById("gfhint"),sp=document.getElementById("gfsplash");
 function set(p){p=Math.round(p*10)/10;bar.style.width=p+"%";pt.textContent=Math.floor(p)+"%"}
 (function tick(){if(done)return;var p=94*(1-Math.exp(-(performance.now()-t0)/2200));set(p);requestAnimationFrame(tick)})();
