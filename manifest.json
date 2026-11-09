@@ -1,0 +1,19 @@
+{
+  "id": "/guerra-de-fac-o/",
+  "name": "Guerra de Facão · Rio",
+  "short_name": "Guerra de Facão",
+  "description": "Jogo de estratégia estilo Risk com as favelas do Rio.",
+  "start_url": "/guerra-de-fac-o/",
+  "scope": "/guerra-de-fac-o/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0e2a",
+  "theme_color": "#0b0e2a",
+  "lang": "pt-BR",
+  "categories": ["games"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
