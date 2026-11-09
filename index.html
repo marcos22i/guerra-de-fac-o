@@ -63,7 +63,7 @@
 if(typeof window.claude!=="undefined")return;
 var URL_="https://vvkmilnxbcayqyxvgkuj.supabase.co",KEY="sb_publishable_W-kQH_PlQRlW-PW-VQvPig_QO0F3N8M";
 if(!URL_||URL_.indexOf("__")===0)return;
-var H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
+var H={apikey:KEY,"Content-Type":"application/json"};if(KEY.indexOf("sb_")!==0)H.Authorization="Bearer "+KEY;
 function rq(path,opt){opt=opt||{};opt.headers=Object.assign({},H,opt.headers||{});return fetch(URL_+"/rest/v1/"+path,opt).then(function(r){if(!r.ok)throw new Error("supabase "+r.status);return r.status==204?null:r.text().then(function(t){return t?JSON.parse(t):null})})}
 function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
 function me(){var i=null;try{i=localStorage.getItem("gf_uid")}catch(e){}if(!i){i="u"+rid();try{localStorage.setItem("gf_uid",i)}catch(e){}}return i}
@@ -77,7 +77,7 @@ function col(name){
     limit:function(n){return query({f:o.f,d:o.d,n:n})},
     get:function(){return q(o).then(snap)},
     onSnapshot:function(ok,err){var stop=false,last="",tm=null;
-      function tick(){if(stop)return;q(o).then(function(rows){if(stop)return;var s=JSON.stringify(rows);if(s!==last){last=s;ok(snap(rows))}}).catch(function(e){if(err)try{err(e)}catch(x){}}).then(function(){if(!stop)tm=setTimeout(tick,3000)})}
+      function tick(){if(stop)return;q(o).then(function(rows){if(stop)return;var s=JSON.stringify(rows);if(s!==last){last=s;ok(snap(rows))}}).catch(function(e){try{console.warn("supabase",e&&e.message)}catch(x){}}).then(function(){if(!stop)tm=setTimeout(tick,3000)})}
       tick();return function(){stop=true;clearTimeout(tm)}}}}
   var base=query({});
   base.add=function(obj){return rq("docs",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({collection:name,id:rid(),data:obj,t:+obj.t||Date.now()})})};
