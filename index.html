@@ -651,7 +651,7 @@ if(G.tg!=null&&s!=null&&!G.busy)h+=`<circle cx="${T[G.tg][1]}" cy="${T[G.tg][2]}
 if(!G.busy&&!G.over&&G.ph=="a"&&G.cur==MY&&s==null)T.forEach((a,i)=>{if(G.own[i]==MY&&G.tr[i]>1&&adj[i].some(j=>G.own[j]!=MY&&!aliado(MY,G.own[j])))h+=`<circle cx="${a[1]}" cy="${a[2]}" r="4.4" fill="none" style="stroke:#fff;stroke-width:.35;stroke-dasharray:1 1;pointer-events:none"/>`});
 let lb="";T.forEach((a,i)=>{if(PV&&PV[i]!=null&&PV[i]!=G.tr[i])h+=`<circle cx="${a[1]}" cy="${a[2]}" r="3.4" fill="none" style="stroke:#fff;stroke-width:.5;pointer-events:none"><animate attributeName="r" from="3.4" to="6.5" dur=".45s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur=".45s" fill="freeze"/></circle>`;lb+=gfName(a,i);const hl=s!=null&&(i==s||(adj[s].includes(i)&&(G.ph=="m"?G.own[i]==MY:G.own[i]!=MY&&!aliado(MY,G.own[i]))));h+=`${gfBall(a,i,hl)}${isQG(i)?qgIcon(a[1],a[2]):""}${tri(i)}<circle data-i="${i}" cx="${a[1]}" cy="${a[2]}" r="5" fill="transparent" style="stroke:none"/>`});
 $("map").innerHTML=h+lb+gfBars+vipCrowns()+bocaIcons()+barIcons();PV=G.tr.slice();
-$("leg").innerHTML=P.map((p,i)=>[p,i]).sort((x,y)=>fbTr(y[1])-fbTr(x[1])||cnt(y[1])-cnt(x[1])||x[1]-y[1]).map(([p,i],k)=>`<span style="background:${p.c};${i==G.cur&&!G.over&&(G.busy||G.mp&&G.ph!="l")?"outline:2px solid #fff;transform:scale(1.08)":""}">${k==0&&cnt(i)&&!G.over?"👑 ":""}${p.n}${G.mp&&SEATS[i]?" 👤":""}${allyOf(i)>=0?" 🤝":""}${G.cm&&G.cm[i]?" 🛡️":""}: ${cnt(i)} · ${fbTr(i)}</span>`.replace('style="','style="'+(cnt(i)||G.ph=="e"?"":"opacity:.35;text-decoration:line-through;"))).join("");
+$("leg").innerHTML=P.map((p,i)=>[p,i]).sort((x,y)=>fbTr(y[1])-fbTr(x[1])||cnt(y[1])-cnt(x[1])||x[1]-y[1]).map(([p,i],k)=>`<span data-pi="${i}" style="background:${p.c};${G.mp&&SEATS[i]?"cursor:pointer;":""}${i==G.cur&&!G.over&&(G.busy||G.mp&&G.ph!="l")?"outline:2px solid #fff;transform:scale(1.08)":""}">${k==0&&cnt(i)&&!G.over?"👑 ":""}${p.n}${G.mp&&SEATS[i]?" 👤":""}${allyOf(i)>=0?" 🤝":""}${G.cm&&G.cm[i]?" 🛡️":""}: ${cnt(i)} · ${fbTr(i)}</span>`.replace('style="','style="'+(cnt(i)||G.ph=="e"?"":"opacity:.35;text-decoration:line-through;"))).join("");
 {const pgv=(G.mp&&G.nm)?cnt(MV())+"/"+N:pg(MV()),pm=pgv.match(/(\d+)\/(\d+)/),pc=pm&&+pm[2]?Math.min(100,Math.round(pm[1]/pm[2]*100)):0;$("ms").innerHTML='<div class="mt"><span class="ml2">Missão</span><b class="pgv">'+pgv+'</b></div><div class="mx">'+(G.mp&&G.nm?"Domine o Rio inteiro: tome todas as favelas":MS[G.ms[MV()]][0]+' <span>(ou dominar tudo)</span>')+'</div><div class="pb"><i style="width:'+pc+'%"></i></div><div class="mc"><span>Rodada '+(G.rd||1)+(G.lim?"/"+G.lim:"")+'</span><span>Tropas '+G.tr.reduce((q,v,j)=>q+(G.own[j]==MV()?v:0),0)+'</span>'+qgChip()+(G.camp!=null?'<span>Fase '+(G.camp+1)+'/'+CAMP.length+'</span>':'')+'<span>Grana '+((G.gr||[])[MV()]||0)+'</span>'+(G.mp&&ROOM?'<span>Sala '+ROOM+'</span>':'')+(allyOf(MY)>=0&&!G.over?'<span>🤝 Taxa: −1 reforço · −1 grana</span>':'')+'</div>'+fbBanner()};
 const c=cc(MV());{const sv=G.over?"Fim de jogo":G.ph=="l"?"Sala online · escolha seu comando":(G.mp&&G.cur!=MY)?"Vez dos "+P[G.cur].n+(isH(G.cur)?" (jogador)":" (IA)")+"...":G.busy?(G.cur!=MY?"Vez dos "+P[G.cur].n+"...":"Atacando..."):(G.ph=="e"?"Montando o mapa":G.ph=="p"?"Escolha seu QG":G.ph=="r"?"Reforço: "+G.rein+" tropas":G.ph=="m"?"Mover tropas (1 vez)":"Ataque")+" · Cartas: "+c.map((n,i)=>CI[i]+n).join(" "),sp=sv.split(" · Cartas: ");$("st").innerHTML='<span class="ph">'+sp[0]+'</span>'+(sp[1]?'<span class="cd">Cartas '+sp[1]+'</span>':"")};
 $("bt").classList.toggle("gfr",G.ph=="p");$("bt").disabled=G.mp&&!G.over&&G.ph!="l"&&G.cur!=MY;$("bt").textContent=G.over?"Novo jogo":(G.ph=="l"||G.ph=="e"?"Começar partida":G.ph=="p"?"Escolha a favela":G.ph=="r"?"Ir para o ataque":"Encerrar turno");
@@ -2195,7 +2195,7 @@ function R(){const s=$("phs"),f=s.querySelector(".fd"),y=f?f.scrollTop:0;s.inner
 function go(a){if(!S.u&&typeof PF!="undefined"&&PF.n){S.n=PF.n;S.u=slug(PF.n);sv()}if((a=="cmp"||a=="wa")&&!S.u){nx=a;a="reg"}cur=a;if(a=="ig"){nw=0;badge()}if(a=="wa"){wn=0;wv=0;badge();seed()}R()}
 const slug=n=>n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9_.]/g,"")||"jogador";
 function send(){const i=$("wi"),t=i.value.trim();if(!t)return;i.value="";const ch=chat,L=S.wa[ch]=S.wa[ch]||[];
-if(ch[0]=="u"&&S.ct.some(x=>x.id==ch)){L.push({me:1,t});ugR(ch,t)}else if(ch=="room"){if(typeof G!="undefined"&&G.mp&&typeof addChat=="function"&&typeof tx=="function"){const x={t:"chat",i:(typeof CID!="undefined"?CID:"p")+Date.now(),k:MY,n:S.n,m:t.slice(0,140)};own=1;try{addChat(x)}finally{own=0}tx(x)}else{L.push({me:1,t});L.push({t:"Você não está numa sala online. Use ☰ → Online."})}}
+if(ch.slice(0,2)=="pc"&&S.ct.some(x=>x.id==ch&&x.pc)){wPc(ch,t);return}if(ch[0]=="u"&&S.ct.some(x=>x.id==ch)){L.push({me:1,t});ugR(ch,t)}else if(ch=="room"){if(typeof G!="undefined"&&G.mp&&typeof addChat=="function"&&typeof tx=="function"){const x={t:"chat",i:(typeof CID!="undefined"?CID:"p")+Date.now(),k:MY,n:S.n,m:t.slice(0,140)};own=1;try{addChat(x)}finally{own=0}tx(x)}else{L.push({me:1,t});L.push({t:"Você não está numa sala online. Use ☰ → Online."})}}
 else if(ch=="gn"){L.push({me:1,t});gnr(t,2,"gn")}else if(ch=="mor"){L.push({me:1,t});if(!talk(-1,ch,t,1))mor(fvn(t)||pk(T)[0],MP,1+(Math.random()*2|0))}else if(ch=="vm"){L.push({me:1,t});setTimeout(()=>ap("vm",{n:pk(VN),c:"#e91e63",t:pk(VR)}),900)}else if(ch[0]=="g"){const f=+ch.slice(1);L.push({me:1,t});if(!mention(f,ch,t)&&!talk(f,ch,t))reply(f,ch,1+(Math.random()*2|0))}else{L.push({me:1,t});if(ch[0]=="n"){if(!talk(+ch.slice(1),ch,t))reply(+ch.slice(1),ch,1,1)}else if(ch.slice(0,3)=="dep"){setTimeout(()=>{try{window.gfDepReply(ch)}catch(e){}},1100)}else L.push({t:"🕒 Entrega quando ele ficar online."})}
 if(ch!="gn"&&ch!="room"&&NET.test(t))gnr(t,1,ch);L.length>40&&L.splice(0,L.length-40);sv();R()}
 function rec(x){if(!x||!x.m)return;try{const q=/^💸 PIX R\$ (\d+) para @(\S+)/.exec(x.m);if(q&&!own&&S.u&&q[2]==S.u)bank(+q[1],"PIX de "+x.n)}catch(e){}try{const q2=/📇 Meu número: (\(\d\d\) \d{5}-\d{4})/.exec(x.m);if(q2&&!own&&x.n){let c=S.ct.find(c=>c.r==x.n);if(!c){c={id:"p"+x.n,n:"👤 "+x.n,r:x.n};S.ct.push(c)}c.num=q2[1];tt("📇 "+x.n+" salvo: "+q2[1],"#25d366")}}catch(e){}const me=own,L=S.wa.room=S.wa.room||[];L.push({me:me?1:0,n:x.n,t:x.m});L.length>40&&L.splice(0,L.length-40);if(!me&&x.n&&x.n!=S.n&&!S.ct.some(c=>c.r==x.n)){S.ct.push({id:"p"+x.n,n:"👤 "+x.n,r:x.n});try{toast("📇 Contato salvo: "+x.n,"#25d366")}catch(e){}}sv();cur=="wa"&&isOn()&&R()}
@@ -2223,6 +2223,7 @@ function w26epT(){w26o=!w26o;const e=$("ep");if(e){e.style.display=w26o?"block":
 function w26tab(v){w26tb=v;const e=$("ep");if(e)e.innerHTML=w26EPB()}
 function w26em(v){const i=$("wi");if(i)i.value=(i.value+v).slice(0,140)}
 function w26X(o){const ch=chat,L=S.wa[ch]=S.wa[ch]||[];
+if(ch.slice(0,2)=="pc"){if(o.img||o.st||o.a)return tt("Pra outro jogador só dá pra mandar texto","#e63946")}
 if(ch=="room"){if(typeof G!="undefined"&&G.mp&&typeof addChat=="function"&&typeof tx=="function"){if(o.img)return tt("Foto só nas conversas do jogo, não na sala online","#e63946");const m=o.st?(o.st[0]=="E"?(W26S[+o.st.slice(1)]||["🖼️"])[0]:"🖼️ figurinha"):o.t;const x={t:"chat",i:(typeof CID!="undefined"?CID:"p")+Date.now(),k:MY,n:S.n,m:String(m).slice(0,140)};own=1;try{addChat(x)}finally{own=0}tx(x)}else{L.push(Object.assign({me:1,t:""},o));L.push({t:"Você não está numa sala online. Use ☰ → Online."})}w26o=0;sv();return R()}
 L.push(Object.assign({me:1,t:""},o));
 const pool=o.img?W26PH:W26ST,r1=()=>pk(pool).replace(/\{tu\}/g,()=>pk(IN));
@@ -2273,7 +2274,7 @@ function gen(f,me){let s;if(Math.random()<.45)s=pk(SH)+" "+pk(EM);else s=(Math.r
 s=s.replace(/\{f\}/g,()=>fav(f)).replace(/\{g\}/g,()=>oth(f)).replace(/\{r\}/g,()=>rv(f));
 if(Math.random()<(me?.92:.38))s=pk(["Ô ","Seu ","Escuta aqui, "])+pk(IN)+", "+s.charAt(0).toLowerCase()+s.slice(1);return s.charAt(0).toUpperCase()+s.slice(1)}
 const gm=(f,d)=>({n:d?"Chefe "+P[f].n:mem(f),t:gen(f,d),c:P[f].c});
-function ap(ch,x){if(!x.me&&!x.a&&!x.img&&!x.st&&x.n&&x.t){x.a=0;x.h=0}const l=S.wa[ch]=S.wa[ch]||[];l.push(x);l.length>60&&l.splice(0,l.length-60);svd();if(isOn()&&cur=="wa"&&wv&&chat==ch){const m=$("phs").querySelector(".ms");if(m){const e=m.querySelector(".em");e&&e.remove();m.insertAdjacentHTML("beforeend",w26MG(x));m.scrollTop=1e9}}else if(ch=="g"+MY||ch=="mor"||ch=="gn"||ch=="vm"||ch[0]=="n"||ch.slice(0,3)=="dep"){UN[ch]=(UN[ch]||0)+1;wn++;badge();if(isOn()&&cur=="wa"&&!wv&&(wt==0||wt==2))R()}}
+function ap(ch,x){if(!x.me&&!x.a&&!x.img&&!x.st&&x.n&&x.t){x.a=0;x.h=0}const l=S.wa[ch]=S.wa[ch]||[];l.push(x);l.length>60&&l.splice(0,l.length-60);svd();if(isOn()&&cur=="wa"&&wv&&chat==ch){const m=$("phs").querySelector(".ms");if(m){const e=m.querySelector(".em");e&&e.remove();m.insertAdjacentHTML("beforeend",w26MG(x));m.scrollTop=1e9}}else if(ch=="g"+MY||ch=="mor"||ch=="gn"||ch=="vm"||ch[0]=="n"||ch.slice(0,2)=="pc"||ch.slice(0,3)=="dep"){UN[ch]=(UN[ch]||0)+1;wn++;badge();if(isOn()&&cur=="wa"&&!wv&&(wt==0||wt==2))R()}}
 function reply(f,ch,n,d){for(let k=0;k<n;k++)setTimeout(()=>ap(ch,gm(f,d)),700+k*1000+Math.random()*700)}
 function seed(){try{if(!sd){sd=1;if(MY>=0&&chat=="room")chat="g"+MY}P.forEach((p,f)=>{const k="g"+f;if(!(S.wa[k]||[]).length)S.wa[k]=[gm(f),gm(f),gm(f)]});seed2()}catch(e){}}
 let wv=0,wt=0,UN={},LK={},call=null,pv0=null;const MST=[],ST=[];
@@ -2362,7 +2363,13 @@ $("ph13").addEventListener("click",e=>{const t=e.target.closest&&e.target.closes
 const foot=$("foot13")||document.body,b=document.createElement("button");b.id="phb";b.className="s";b.setAttribute("aria-label","Celular");b.innerHTML='📱<i id="phn"></i>';foot.appendChild(b);b.onclick=()=>{if(!vpOk()){vpGate();return}$("ph13").classList.add("on");cur="home";R()};badge();
 try{const _l=log;log=function(m){try{if(typeof m=="string"){evt(m);if(NR.test(m))news(m);else if(/baque|caô|moral|respeita/i.test(m)){const f=fIdx(m);if(f>=0)ap("g"+f,{n:mem(f),t:m.replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u,""),c:P[f].c})}}}catch(e){}return _l.apply(this,arguments)}}catch(e){}
 try{const _a=addChat;addChat=function(x){try{rec(x)}catch(e){}return _a.apply(this,arguments)}}catch(e){}
-window.gfPhone={post:post,ap:ap,bank:bank,bal:function(){return S.bk},ex:function(){return S.ex},R:function(){R()},ct:function(id,n,c){const x=S.ct.find(x=>x.id==id);if(!x)S.ct.push({id:id,n:n,c:c,npc:1});else{x.n=n;x.c=c}sv()}};(function(){const t=()=>{const e=document.getElementById("sbt");if(e)e.textContent=new Date().toTimeString().slice(0,5)};t();setInterval(t,15000)})();
+function pcCt(cid,name,num,img,col){const id="pc"+String(cid).replace(/[^\w-]/g,""),nm=String(name||"Jogador").replace(/[<>&"'`]/g,"").slice(0,16)||"Jogador";let c=S.ct.find(x=>x.id==id);
+if(!c){c={id,n:"👤 "+nm,r:nm,pc:cid};S.ct.push(c);tt("📇 Contato salvo: "+nm,"#25d366")}else{c.n="👤 "+nm;c.r=nm}
+if(num&&/^\(\d\d\) \d{5}-\d{4}$/.test(num))c.num=num;if(col&&/^#[0-9a-f]{6}$/i.test(col))c.c=col;if(typeof img=="string"&&img.length<90000&&/^data:image\//.test(img))c.img=img;return c}
+function wPc(ch,t){const c=S.ct.find(x=>x.id==ch),L=S.wa[ch]=S.wa[ch]||[];let r="x";try{r=window.gfWaOut?window.gfWaOut(c.pc,t,S.ph.num):"x"}catch(e){}
+L.push({me:1,t});if(r!==true)L.push({t:r==="off"?"📵 O celular dele não está ativo.":"🕒 Ele não está na sala agora."});L.length>40&&L.splice(0,L.length-40);sv();R()}
+window.gfPhone={on:()=>!!(S.ph.c&&S.ph.ch),recvDM:(cid,n,t,num,img,col)=>{if(!(S.ph.c&&S.ph.ch))return false;const c=pcCt(cid,n,num,img,col);ap(c.id,{n:c.n.slice(3),t:String(t).slice(0,140)});if(!(isOn()&&cur=="wa"&&wv&&chat==c.id))tt("💬 "+c.n.slice(3)+": "+String(t).slice(0,50),"#25d366");sv();return true},
+openWith:(cid,n,num,img,col)=>{if(!(S.ph.c&&S.ph.ch)){tt("Compre o celular e o chip na loja do celular do jogo","#e63946");return false}const c=pcCt(cid,n,num,img,col);chat=c.id;wv=1;cur="wa";sv();$("ph13").classList.add("on");R();return true},post:post,ap:ap,bank:bank,bal:function(){return S.bk},ex:function(){return S.ex},R:function(){R()},ct:function(id,n,c){const x=S.ct.find(x=>x.id==id);if(!x)S.ct.push({id:id,n:n,c:c,npc:1});else{x.n=n;x.c=c}sv()}};(function(){const t=()=>{const e=document.getElementById("sbt");if(e)e.textContent=new Date().toTimeString().slice(0,5)};t();setInterval(t,15000)})();
 })();</script>
 <style id="ph13ip">
 /* iPhone 18 Pro Max */
@@ -4292,4 +4299,183 @@ window.vipAdmin=login;
 <script>if("serviceWorker"in navigator&&location.protocol.indexOf("http")==0){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script><script>/* ajusta a barra de baixo à largura da tela (celulares estreitos / letra grande) */
 (function(){function fit(){try{var e=document.getElementById("foot13");if(!e)return;e.style.zoom="";var W=window.innerWidth,L=e.getBoundingClientRect().left,mx=0,k=e.children;for(var i=0;i<k.length;i++){var r=k[i].getBoundingClientRect();if(r.width&&r.right>mx)mx=r.right}var need=Math.max(mx-L+6,e.scrollWidth);if(need>W+1){var z=Math.max(.55,Math.floor(W/need*100)/100);e.style.zoom=z}}catch(x){}}
 window.addEventListener("resize",fit);window.addEventListener("orientationchange",function(){setTimeout(fit,300)});setInterval(fit,700);setTimeout(fit,1500)})();
+</script><script id="perfilsala">(function(){try{
+var PFC={},LK="",LC=0;
+function okImg(s){return typeof s=="string"&&s.length<450000&&/^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(s)}
+function ls(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
+function myCard(){
+  var vip=0;try{vip=vipLv()|0}catch(e){}
+  var bn=ls("gf_banner"),lg=ls("gf_logo"),vi=ls("gf_vipimg");
+  return {n:PF.n||"",vip:vip,rs:+PF.rs||0,v:+PF.v||0,d:+PF.d||0,p:+PF.p||0,t:+PF.t||0,e:+PF.e||0,aj:+PF.aj||0,ig:+PF.ig||0,
+    ph:(function(){try{return vipOn()&&gfPhone.on()?1:0}catch(e){return 0}})(),bs:PF.bs||"",bn:okImg(bn)?bn:"",lg:okImg(lg)?lg:"",vi:vi=="-"?"-":(okImg(vi)?vi:"")};
+}
+function clamp(c){
+  if(!c||typeof c!="object")return null;
+  var n=function(k){return Math.max(0,Math.min(1e6,+c[k]||0))};
+  return {n:clean(c.n||""),vip:Math.max(0,Math.min(3,n("vip")|0)),rs:n("rs"),v:n("v"),d:n("d"),p:n("p"),t:n("t"),e:n("e"),aj:n("aj"),ig:n("ig"),ph:c.ph?1:0,
+    bs:typeof c.bs=="string"&&/^\w{0,12}$/.test(c.bs)?c.bs:"",bn:okImg(c.bn)?c.bn:"",lg:okImg(c.lg)?c.lg:"",vi:c.vi=="-"?"-":(okImg(c.vi)?c.vi:"")};
+}
+function sendMine(force){
+  if(!G.mp)return;var c=myCard();PFC[CID]=c;
+  var k=JSON.stringify([c.n,c.vip,c.rs,c.v,c.d,c.p,c.t,c.e,c.aj,c.ig,c.ph,c.bs,c.bn.length,c.lg.length,c.vi.length]);
+  var cc=CONN.filter(function(x){return x.open}).length;
+  if(!force&&k==LK&&cc==LC)return;LK=k;LC=cc;
+  if(HOST)bc({t:"pf",cid:CID,c:c});else tx({t:"pf",c:c});
+}
+var oH=hData;hData=function(m,c){
+  if(m&&m.t=="pf"){var cd=clamp(m.c);if(cd&&c&&c.cid){PFC[c.cid]=cd;bc({t:"pf",cid:c.cid,c:cd},c)}return}
+  if(m&&m.t=="pq"){sendMine(true);return}
+  oH(m,c);
+  if(m&&m.t=="hi"&&c&&c.cid){setTimeout(function(){try{sendMine(false);for(var id in PFC)if(id!=c.cid&&c.open)c.send({t:"pf",cid:id,c:PFC[id]})}catch(e){}},400)}
+};
+var oC=cData;cData=function(m){
+  if(m&&m.t=="pf"){var cd=clamp(m.c),id=String(m.cid||"");if(cd&&id&&id!=CID)PFC[id]=cd;return}
+  if(m&&m.t=="pq"){sendMine(true);return}
+  oC(m);
+  if(m&&m.t=="hello")setTimeout(function(){sendMine(true)},500);
+};
+setInterval(function(){try{sendMine(false)}catch(e){}},3000);
+
+function verSala(k){
+  if(!G.mp)return;var s=SEATS[k];if(!s)return;
+  if(s.cid==CID){showPerfil();return}
+  var c=PFC[s.cid];
+  var bt='<div class="bs" style="padding:0;margin-top:12px"><button class="s" onclick="ov()">Fechar</button></div>';
+  if(!c){try{tx({t:"pq"})}catch(e){}ov('<div style="font-size:12px;color:#9fa8da">Perfil do jogador</div><p style="margin:12px 0">'+esc(CHF[k])+' ainda não enviou o perfil. Tente de novo em alguns segundos.</p>'+bt);return}
+  var lv=c.vip,vip=lv>0,sb=PFBN.find(function(z){return z.id==c.bs}),vc=c.bn?P[k].c:(sb?sb.c:P[k].c);
+  var bn=c.bn||(sb?sb.s:PFX_HERO),lg=c.lg,lcs="";if(!lg&&!c.bn&&sb&&sb.l){lg=sb.l;lcs=" cs"}lg=lg||PFX_LOGO;
+  var cur=RK.filter(function(x){return c.rs>=x[0]}).pop()||RK[0],nx=RK.find(function(x){return x[0]>c.rs});
+  var pc=nx?Math.max(0,Math.min(100,Math.round((c.rs-cur[0])/(nx[0]-cur[0])*100))):100;
+  var nm=c.n||"Chefe sem nome",wr=c.p?Math.round(c.v/c.p*100)+"%":"—";
+  var F=PFF[k],fn=F[0]?"<i>"+F[0]+"</i> "+F[1]:"<i>"+F[1]+"</i>";
+  var ttl=vip?VIPT[lv]:cur[1],sub=vip?PFS[lv]:"Subindo no respeito";
+  var rnk=(vip?"Rank: "+cur[1]+" · ":"")+(nx?"Próximo rank: "+nx[1]+" com "+nx[0]+" pts":"Rank máximo");
+  var fl=[];(G.own||[]).forEach(function(o,i){if(o==k&&T[i])fl.push(T[i][0])});
+  var fv=fl.length?'<div class="fv">'+fl.slice(0,8).map(function(n){return "<span>"+ic("pin",13)+esc(n)+"</span>"}).join("")+(fl.length>8?"<span>+"+(fl.length-8)+"</span>":"")+"</div>":"";
+  var cell=function(i,v,l){return "<div>"+ic(i,22)+"<em><b>"+v+"</b><small>"+l+"</small></em></div>"};
+  var vi=c.vi=="-"?"":(c.vi||(vip?PFX_THUMB:""));
+  var vcard=vip?'<div class="cd vp"><div class="vr">'+ic("crown",38)+'<div class="tx"><b>'+VIPN[lv]+'</b><p>Facção de '+esc(nm)+'</p></div>'+(vi?'<img alt="" src="'+vi+'">':"")+'</div></div>':"";
+  ov('<div class="pfx"><div class="hd"><img class="lgo'+lcs+'" alt="" src="'+lg+'"><div class="nm"><b>'+(vip?'<span style="color:'+vc+';display:flex">'+ic("crown",24)+"</span>":"")+"<span>"+esc(nm)+"</span>"+(vip?PFB:"")+'</b><small style="color:#9a9aa6">Perfil do jogador · '+esc(CHF[k])+'</small></div></div>'+
+  '<div class="hero" style="cursor:default"><img alt="" src="'+bn+'"></div>'+
+  '<div class="cd fc"><div class="fr"><span class="cr">'+ic("crown",40)+'</span><div class="ft"><b>'+fn+'</b><small>'+F[2]+'</small></div><div class="ld">Líder: <b>'+esc(nm)+"</b>"+(vip?" 👑":"")+"</div></div>"+fv+"</div>"+
+  '<div class="cd rk"><div class="rt"><div class="l">'+ic("crown",30)+"<div><b>"+ttl+"</b><small>"+sub+'</small></div></div><div class="r"><b>'+c.rs+" <i>pts de</i> respeito</b></div></div><div class=\"bar\"><div style=\"width:"+pc+'%"></div></div><div class="rn">'+rnk+"</div></div>"+
+  '<div class="sh">'+ic("chart",22)+"Estatísticas</div>"+
+  '<div class="gr">'+cell("trophy",c.v,"vitórias")+cell("skull",c.d,"derrotas")+cell("chart",wr,"% vitórias")+cell("people",c.p,"partidas")+cell("star",c.t,"favelas")+cell("trash",c.e,"eliminados")+cell("heart",c.aj,"ajudas")+cell("eye",c.ig,"ignoradas")+"</div>"+
+  vcard+'<div style="text-align:center;font-size:11.5px;color:#9a9aa6;margin-top:8px">'+(c.ph?"📱 Celular ativo: dá pra mandar WhatsApp":"📵 Celular dele ainda não está ativo")+'</div><div class="ft2">'+(c.ph?'<button onclick="verWaSala('+k+')">💬 WhatsApp</button>':"")+'<button onclick="dmOpen('+k+')">✉️ Mensagem</button><button class="g" onclick="ov()">Fechar</button></div></div>');
+  var b=document.querySelector("#ov .box");if(b){b.classList.add("pfbox");b.style.setProperty("--vc",vc);b.style.setProperty("--vcg",hexA(vc,.45));b.style.setProperty("--vcg2",hexA(vc,.14));b.style.setProperty("--vcl",pfMix(vc,255,.22));b.style.setProperty("--vcd",pfMix(vc,0,.38))}
+}
+function verWa(k){var s=SEATS[k];if(!s||s.cid==CID)return;var c=PFC[s.cid];if(!c||!c.ph){toast("O celular dele não está ativo","#e63946");return}
+  try{if(!vipOn()){ov();if(window.vpGate)vpGate();else toast("Celular só para VIP","#e63946");return}}catch(e){}
+  var sb=PFBN.find(function(z){return z.id==c.bs}),img=c.lg||(sb&&sb.l)||"";ov();gfPhone.openWith(s.cid,c.n||CHF[k],"",img,P[k].c)}
+window.verWaSala=verWa;window.gfPFC=function(id){return PFC[id]||null};
+window.verPerfilSala=verSala;
+
+var oM=mpMenu;mpMenu=function(){
+  oM.apply(this,arguments);
+  try{if(!G.mp)return;var b=document.querySelector("#ov .box");if(!b)return;
+    var rows="";for(var k=0;k<5;k++){var s=SEATS[k];if(!s)continue;var c=s.cid==CID?myCard():PFC[s.cid];
+      rows+='<button class="s" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;margin-bottom:6px;border-left:6px solid '+P[k].c+'" onclick="verPerfilSala('+k+')"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(c&&c.vip?"👑 ":"👤 ")+esc(CHF[k])+(c&&c.n?" · "+esc(c.n):"")+(s.cid==CID?" (você)":"")+'</span><span style="font-size:11px;color:#9fa8da">Ver perfil</span></button>'}
+    if(rows){var d=document.createElement("div");d.innerHTML='<div style="font-size:13px;font-weight:700;margin:10px 0 6px">Perfis dos jogadores</div>'+rows;b.insertBefore(d,b.lastElementChild)}
+  }catch(e){}
+};
+var lg=document.getElementById("leg");if(lg)lg.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-pi]");if(s&&G.mp&&SEATS[+s.dataset.pi])verSala(+s.dataset.pi)});
+}catch(e){console.error("perfil-sala",e)}})();
+</script><script id="dmsala">(function(){try{
+var DM={},OPEN=null,UN={};
+function seatOf(cid){for(var k in SEATS)if(SEATS[k].cid==cid)return +k;return -1}
+function nameOf(cid){var k=seatOf(cid);return k>=0?CHF[k]:"Jogador"}
+function line(x){return '<div style="margin:4px 0;text-align:'+(x.me?"right":"left")+'"><span style="display:inline-block;max-width:85%;padding:6px 10px;border-radius:12px;background:'+(x.me?"#2b3a8f":"#232b66")+';color:#fff;font-size:13px;text-align:left;word-break:break-word">'+esc(x.m)+'</span></div>'}
+function render(){var l=document.getElementById("dml");if(!l||!OPEN)return;l.innerHTML=(DM[OPEN]||[]).map(line).join("")||'<p style="font-size:12px;color:#9fa8da">Nenhuma mensagem ainda.</p>';l.scrollTop=l.scrollHeight}
+function dmOpen(k){
+  if(!G.mp||!SEATS[k])return;var cid=SEATS[k].cid;if(cid==CID)return;OPEN=cid;UN[cid]=0;
+  ov('<h2 style="margin:0 0 4px">✉️ '+esc(CHF[k])+'</h2><div style="font-size:11px;color:#9fa8da;margin-bottom:6px">Mensagem privada: só ele vê.</div><div id="dml" style="height:200px;overflow:auto;background:#0d1237;border-radius:10px;padding:8px 10px;margin-bottom:8px"></div><div class="bs"><input id="dmi" maxlength="140" placeholder="Digite uma mensagem..." autocomplete="off" style="flex:1;min-width:0;padding:10px;border-radius:8px;border:1px solid #3b4690;background:#0d1237;color:#fff;font-size:16px"><button onclick="dmSend()">Enviar</button></div><div class="bs"><button class="s" onclick="verPerfilSala('+k+')">Voltar ao perfil</button><button class="s" onclick="ov()">Fechar</button></div>');
+  render();var i=document.getElementById("dmi");if(i)i.addEventListener("keydown",function(e){if(e.key=="Enter")dmSend()});
+}
+function dmSend(){
+  var i=document.getElementById("dmi");if(!i||!OPEN)return;var t=String(i.value||"").replace(/[<>]/g,"").trim().slice(0,140);if(!t)return;
+  var to=OPEN,msg={t:"dm",to:to,n:String(PF.n||CHF[MY]||"Jogador").replace(/[<>&"'`]/g,"").slice(0,16),m:t};
+  if(HOST){var c=CONN.find(function(x){return x.open&&x.cid==to});if(!c){toast("Jogador não está conectado","#e63946");return}try{c.send({t:"dm",from:CID,n:msg.n,m:t})}catch(e){return}}
+  else{if(!(HC&&HC.open)){toast("Sem conexão com a sala","#e63946");return}tx(msg)}
+  (DM[to]=DM[to]||[]).push({me:1,m:t});i.value="";render();
+}
+function deliver(from,n,m){
+  if(!from||typeof m!="string")return;m=m.replace(/[<>]/g,"").slice(0,140);if(!m)return;
+  (DM[from]=DM[from]||[]).push({me:0,m:m});
+  if(OPEN==from&&document.getElementById("dml"))render();
+  else{UN[from]=(UN[from]||0)+1;toast("✉️ "+String(n||nameOf(from)).replace(/[<>&"'`]/g,"").slice(0,16)+": "+m.slice(0,60),"#f5c518");try{snd("card")}catch(e){}}
+}
+var oH=hData;hData=function(m,c){
+  if(m&&m.t=="dm"){
+    if(!c||!c.cid||typeof m.m!="string"||Date.now()-(c._ld||0)<300)return;c._ld=Date.now();
+    if(m.to==CID)deliver(c.cid,m.n,m.m);
+    else{var d=CONN.find(function(x){return x.open&&x.cid==m.to});if(d)try{d.send({t:"dm",from:c.cid,n:String(m.n||"").slice(0,16),m:String(m.m).slice(0,140)})}catch(e){}}
+    return}
+  if(m&&m.t=="wa"){
+    if(!c||!c.cid||typeof m.m!="string"||Date.now()-(c._lw||0)<300)return;c._lw=Date.now();
+    if(m.to==CID)waIn(c.cid,m.n,m.m,m.num);
+    else{var d2=CONN.find(function(x){return x.open&&x.cid==m.to});if(d2)try{d2.send({t:"wa",from:c.cid,n:String(m.n||"").slice(0,16),m:String(m.m).slice(0,140),num:String(m.num||"").slice(0,16)})}catch(e){}}
+    return}
+  oH(m,c)};
+var oC=cData;cData=function(m){
+  if(m&&m.t=="dm"){deliver(String(m.from||""),m.n,m.m);return}
+  if(m&&m.t=="wa"){waIn(String(m.from||""),m.n,m.m,m.num);return}
+  oC(m)};
+function waIn(from,n,m,num){var c=window.gfPFC&&gfPFC(from),k=seatOf(from),sb=c&&PFBN.find(function(z){return z.id==c.bs});
+  try{return gfPhone.recvDM(from,n||(c&&c.n)||nameOf(from),m,num,c?(c.lg||(sb&&sb.l)||""):"",k>=0?P[k].c:"")}catch(e){return false}}
+window.gfWaOut=function(cid,text,num){var c=window.gfPFC&&gfPFC(cid);if(!c||!c.ph)return "off";var n=String(PF.n||CHF[MY]||"Jogador").replace(/[<>&"'`]/g,"").slice(0,16);text=String(text).slice(0,140);
+  if(HOST){var d=CONN.find(function(x){return x.open&&x.cid==cid});if(!d)return "gone";try{d.send({t:"wa",from:CID,n:n,m:text,num:num||""});return true}catch(e){return "gone"}}
+  if(!(HC&&HC.open))return "gone";tx({t:"wa",to:cid,n:n,m:text,num:num||""});return true};
+window.dmOpen=dmOpen;window.dmSend=dmSend;
+}catch(e){console.error("dm",e)}})();
+</script><script id="cloudsave">(function(){try{
+var GR={
+ a:["gf4","gf_prof","gf_camp","gf_ach","gf_sk","gf_t2","gf_pf","gf_vip","gf_vipb","gf_cfg","gf_rad","gf_spd","gf_tipoff","gf_tipn","gf_dvlive","gf_dvdia","gf_dvtema","gf_dvslot","gf_dvhis","gf_dvsala","gf_dvpin","gf_dvhist"],
+ i:["gf_banner","gf_logo","gf_vipimg"],
+ p:["gf_ph13"],
+ d:["gf_dc13"]};
+var MAX=850000,LH={},PT=0;
+function gl(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function sl(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
+function col(){return CL.db.collection("data/users/"+CL.id)}
+function slim(k,v){
+  if(v.length<=MAX)return v;
+  if(k=="gf_ph13"){try{var o=JSON.parse(v);(o.ps||[]).forEach(function(p){delete p.img});for(var c in (o.wa||{}))(o.wa[c]||[]).forEach(function(m){delete m.img});o.stk=[];v=JSON.stringify(o)}catch(e){}}
+  return v.length<=MAX?v:null}
+function pack(g){var o={},n=0;GR[g].forEach(function(k){var v=gl(k);if(v!=null){v=slim(k,v);if(v!=null){o[k]=v;n++}}});return o}
+function hash(o){var s=JSON.stringify(o),h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return s.length+":"+h}
+async function push(force){
+  if(!CL.ok||PT)return;PT=1;
+  try{var t=Date.now(),ok=true,ch=false;
+    for(var g in GR){var o=pack(g);if(!Object.keys(o).length)continue;var h=hash(o);if(!force&&LH[g]===h)continue;
+      try{o.t=t;await col().doc("save_"+g).set(o);LH[g]=h;ch=true}catch(e){ok=false}}
+    if(ch&&ok){sl("gf_cloud_t",String(t))}
+  }catch(e){}
+  PT=0}
+async function pull(){
+  var docs={},newest=0;
+  for(var g in GR){try{var sn=await col().doc("save_"+g).get();if(sn&&sn.exists){var d=sn.data()||{};docs[g]=d;if((+d.t||0)>newest)newest=+d.t}}catch(e){}}
+  return {docs:docs,newest:newest}}
+function apply(r){
+  for(var g in r.docs){var d=r.docs[g];GR[g].forEach(function(k){if(typeof d[k]=="string")sl(k,d[k])})}
+  sl("gf_cloud_t",String(r.newest))}
+function ask(r){
+  ov('<h2>☁️ Progresso na conta</h2><p style="margin:8px 0;font-size:13px;color:#c5cae9">Achamos um progresso salvo na sua conta (perfil, VIP, celular, contatos e conversas). Quer usar ele neste aparelho?</p><div class="bs" style="padding:0;margin-top:10px"><button id="cs1">Usar o da conta</button><button class="s" id="cs2">Manter este aparelho</button></div>');
+  document.getElementById("cs1").onclick=function(){apply(r);location.reload()};
+  document.getElementById("cs2").onclick=function(){sl("gf_cloud_t",String(Date.now()));ov();ST=3;push(true)}}
+var ST=0,PR=null;
+async function start(){
+  if(ST||!CL.ok)return;ST=1;
+  try{var r=await pull(),lt=+gl("gf_cloud_t")||0;
+    if(!r.newest){ST=3;await push(true);return}
+    if(lt&&r.newest>lt){apply(r);toast("☁️ Progresso da conta carregado","#f5c518");setTimeout(function(){location.reload()},600);return}
+    if(!lt){PR=r;ST=2;return}
+    ST=3;
+  }catch(e){ST=0}}
+setInterval(function(){try{start()}catch(e){}},2000);
+setInterval(function(){try{if(ST==3)push(false)}catch(e){}},6000);
+setInterval(function(){try{if(ST==2&&PR){var o=document.getElementById("ov");if(!o||o.style.display!="flex"){var r=PR;PR=null;ST=4;ask(r)}}}catch(e){}},1500);
+addEventListener("pagehide",function(){try{if(ST==3)push(false)}catch(e){}});
+document.addEventListener("visibilitychange",function(){try{if(document.hidden&&ST==3)push(false)}catch(e){}});
+window.gfCloudSave=function(){return push(true)};
+}catch(e){console.error("cloud-save",e)}})();
 </script></body></html>
