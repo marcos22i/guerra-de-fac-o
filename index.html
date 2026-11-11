@@ -4485,10 +4485,6 @@ window.gfCloudSave=function(){return push(true)};
 </script><style id="gfx-online-css">
 /* bandeja de ações (Dar baque etc.) acima do rodapé: nada fica cortado */
 #foot13{overflow:visible!important}
-#foot13 #ap:not([style*="none"]){position:absolute!important;left:8px;right:8px;bottom:calc(100% + 4px);display:flex!important;flex-wrap:wrap!important;overflow-x:hidden!important;overflow-y:auto!important;max-height:30vh;justify-content:center;align-items:stretch;gap:4px!important;padding:4px 6px!important;background:rgba(8,10,34,.88)!important;border:1px solid #3b4690;border-radius:10px;box-shadow:0 -4px 14px #0009;z-index:30}
-#foot13 #ap:not([style*="none"]) b{flex:1 1 100%!important;text-align:center;white-space:normal!important;font-size:11px!important;line-height:1.15}
-#foot13 #ap:not([style*="none"]) button{flex:1 1 30%!important;height:auto!important;min-height:28px!important;white-space:normal!important;line-height:1.1;font-size:11px!important;padding:3px 8px!important;width:auto!important}
-#foot13 #ap:not([style*="none"]) button[disabled]{flex:1 1 100%!important;min-height:0!important;background:none!important;border:0!important;box-shadow:none!important;font-size:10.5px!important;padding:1px 4px!important;opacity:.85}
 .gfl-row{display:flex;align-items:center;gap:8px;margin:5px 0;padding:8px 10px;border-radius:10px;background:#0d1237;border:1px solid #2a3270;font-size:14px}
 .gfl-row b{letter-spacing:3px;color:#f5c518}
 .gfl-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c5cae9}
@@ -4497,11 +4493,14 @@ window.gfCloudSave=function(){return push(true)};
 /* +, − e 🌐 saem do rodapé e ficam flutuando no canto direito do mapa */
 body #foot13 #zc,body #foot13 #zc.gl{position:fixed!important;right:calc(6px + env(safe-area-inset-right,0px))!important;left:auto!important;top:42%!important;bottom:auto!important;flex-direction:column!important;gap:6px!important;margin:0!important;z-index:7!important;width:auto!important;height:auto!important}
 body #foot13 #zc button{width:28px!important;height:28px!important;min-height:28px!important;font-size:14px!important;opacity:.78!important;background:rgba(8,10,34,.72)!important}
-/* bandeja de ações menor, centralizada e sem esticar na tela toda */
-body #foot13 #ap:not([style*="none"]){left:50%!important;right:auto!important;transform:translateX(-50%);width:max-content!important;max-width:60vw!important;padding:3px 5px!important;gap:3px!important;max-height:26vh!important;border-radius:9px!important}
-body #foot13 #ap:not([style*="none"]) button{flex:1 1 auto!important;min-height:24px!important;font-size:10px!important;padding:2px 8px!important}
-body #foot13 #ap:not([style*="none"]) button[disabled]{flex:1 1 100%!important;min-height:0!important;font-size:9.5px!important;padding:0 3px!important}
-body #foot13 #ap:not([style*="none"]) b{font-size:10px!important}
+/* ações (Dar baque / Mover tropas / Ações) dentro do rodapé, pequenas; ordem: ações → Encerrar turno → ☰ */
+body #foot13 #ap{position:static!important;transform:none!important;left:auto!important;right:auto!important;bottom:auto!important;display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;max-height:none!important;width:auto!important;flex:0 1 auto!important;min-width:0!important;gap:4px!important;padding:0!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;order:8!important;align-items:center}
+body #foot13 #ap[style*="none"]{display:none!important}
+body #foot13 #ap button{flex:none!important;height:28px!important;min-height:28px!important;padding:0 8px!important;font-size:10.5px!important;white-space:nowrap!important;width:auto!important}
+body #foot13 #ap button[disabled]{display:none!important}
+body #foot13 #ap b{flex:none!important;font-size:10px!important;white-space:nowrap!important}
+body #foot13 #bt{order:9!important;margin-left:4px!important;min-width:0!important;padding:0 12px!important;font-size:12px!important}
+body #foot13 #mb{order:10!important}
 </style>
 <script id="gfx-online-js">(function(){try{
 var db=null,pubT=0,wasHost="",SBOK=(typeof claude!=="undefined");
