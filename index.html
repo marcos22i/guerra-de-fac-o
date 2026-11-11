@@ -4493,6 +4493,15 @@ window.gfCloudSave=function(){return push(true)};
 .gfl-row b{letter-spacing:3px;color:#f5c518}
 .gfl-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c5cae9}
 .gfl-row button{min-height:34px;padding:4px 14px}
+</style><style id="gfx-compacto">
+/* +, − e 🌐 saem do rodapé e ficam flutuando no canto direito do mapa */
+body #foot13 #zc,body #foot13 #zc.gl{position:fixed!important;right:calc(6px + env(safe-area-inset-right,0px))!important;left:auto!important;top:42%!important;bottom:auto!important;flex-direction:column!important;gap:6px!important;margin:0!important;z-index:7!important;width:auto!important;height:auto!important}
+body #foot13 #zc button{width:28px!important;height:28px!important;min-height:28px!important;font-size:14px!important;opacity:.78!important;background:rgba(8,10,34,.72)!important}
+/* bandeja de ações menor, centralizada e sem esticar na tela toda */
+body #foot13 #ap:not([style*="none"]){left:50%!important;right:auto!important;transform:translateX(-50%);width:max-content!important;max-width:60vw!important;padding:3px 5px!important;gap:3px!important;max-height:26vh!important;border-radius:9px!important}
+body #foot13 #ap:not([style*="none"]) button{flex:1 1 auto!important;min-height:24px!important;font-size:10px!important;padding:2px 8px!important}
+body #foot13 #ap:not([style*="none"]) button[disabled]{flex:1 1 100%!important;min-height:0!important;font-size:9.5px!important;padding:0 3px!important}
+body #foot13 #ap:not([style*="none"]) b{font-size:10px!important}
 </style>
 <script id="gfx-online-js">(function(){try{
 var db=null,pubT=0,wasHost="",SBOK=(typeof claude!=="undefined");
